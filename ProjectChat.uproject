@@ -7,7 +7,12 @@
 		{
 			"Name": "ProjectChat",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine",
+				"UMG",
+				"CoreUObject"
+			]
 		}
 	]
 }
