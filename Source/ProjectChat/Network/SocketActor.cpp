@@ -15,6 +15,7 @@
 ASocketActor::ASocketActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+
 	PrimaryActorTick.bCanEverTick = true;
 
 }
@@ -24,15 +25,13 @@ void ASocketActor::SetPacketManager(PacketManager* packetManager)
 	Packetmanager = packetManager;
 }
 
-// Called when the game starts or when spawned
-void ASocketActor::BeginPlay()
+void ASocketActor::ConnectServer(int port, std::function<void(void)> successAction, std::function<void(void)> onFailAction)
 {
 	Super::BeginPlay();
 
 	Socket = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateSocket(NAME_Stream, TEXT("default"), false);
 
 	FString address = TEXT("127.0.0.1");
-	int32 port = 7777;
 	FIPv4Address ip;
 	FIPv4Address::Parse(address, ip);
 
@@ -42,15 +41,29 @@ void ASocketActor::BeginPlay()
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Trying to connect.")));
 
-	bool connected = Socket->Connect(*addr);
+	IsConnected = Socket->Connect(*addr);
 
-	int newSize;
-	Socket->SetReceiveBufferSize(2048,newSize);
+
+	if(IsConnected == true)
+	{
+		int newSize;
+		Socket->SetReceiveBufferSize(2048, newSize);
+		successAction();
+	}
+	else
+	{
+		onFailAction();
+	}
+
 }
 
 // Called every frame
 void ASocketActor::Tick(float DeltaTime)
 {
+	if (IsConnected == false)
+	{
+		return;
+	}
 
 	uint32 DataSize = 0;
 	int32 DataLen = 0;

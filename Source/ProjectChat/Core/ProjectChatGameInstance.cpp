@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MyGameInstance.h"
+#include "ProjectChatGameInstance.h"
 
 #include <string>
 
@@ -11,17 +11,18 @@
 #include "../Network/PacketManager.h"
 #include "../Network/ServerResponseHandler.h"
 
-void UMyGameInstance::OnStart()
+void UProjectChatGameInstance::OnStart()
 {
 	Super::OnStart();
 
 	Controller = new UIChatController();
 	Packetmanager = new PacketManager();
-	ServerResponseHandler * responseHandler = new ServerResponseHandler();
+	ServerResponseHandler* responseHandler = new ServerResponseHandler();
 
 	Controller->SetWorld(GetWorld());
+	Controller->CreateMainView();
 	Controller->CreateLoginView();
-//	Controller->CreateMainView();
+
 
 	FVector Location(0.0f, 0.0f, 0.0f);
 	FRotator Rotation(0.0f, 0.0f, 0.0f);
@@ -34,4 +35,3 @@ void UMyGameInstance::OnStart()
 	SocketActor->SetPacketManager(Packetmanager);
 	Controller->SetPacketManager(Packetmanager);
 }
-

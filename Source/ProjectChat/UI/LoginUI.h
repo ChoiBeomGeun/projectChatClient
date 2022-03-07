@@ -6,25 +6,34 @@
 #include "ViewWidget.h"
 #include "LoginUI.generated.h"
 
+
 /**
  * 
  */
+class UTextBlock;
 class UEditableTextBox;
 class UButton;
 UCLASS()
 class PROJECTCHAT_API ULoginUI : public UViewWidget
 {
 	GENERATED_BODY()
-
 public:
-	
 	virtual void NativeConstruct() override;
-
 
 	UFUNCTION()
 	void OnClickLoginBtn();
 
+
+	UFUNCTION()
+	void OnClickSetPortBtn();
+
+	void SetPortUI();
+	void SetLoginUI();
+
 private:
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	UTextBlock* TitleTextBlock = nullptr;
+
 	UPROPERTY(meta = (BindWidget))
 	UEditableTextBox* TextBox;
 

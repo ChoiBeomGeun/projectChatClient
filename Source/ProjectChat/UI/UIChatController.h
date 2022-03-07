@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <functional>
+
 #include "CoreMinimal.h"
 
 /**
@@ -26,6 +28,7 @@ public:
 	void HideLoginUI();
 
 	void RequestSendLogin(const FString& name);
+	void RequestConnectServer(int port, std::function<void(void)> onSuccessAction, std::function<void(void)> onFailAction);
 
 private:
 

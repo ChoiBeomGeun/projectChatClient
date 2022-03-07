@@ -22,6 +22,7 @@ public:
 	//packet section
 	void SetServerResponseHandler(ServerResponseHandler * handler);
 	void SetConnectedSocket(ASocketActor* socket);
+	void ConnectServer(int port, std::function<void(void)> onSuccessAction, std::function<void(void)> onFailAction);
 	void SendRoomList();
 	void SendLogin(const FString& name);
 	void HandleRecv(const FString& buffer);
@@ -30,6 +31,6 @@ public:
 private:
 	TArray<FString> SplitString(char* target, const char* delimiter);
 private:
-	ASocketActor* ConnectedSocket;
+	ASocketActor* CurrentSocket;
 	ServerResponseHandler* ResponseHandler;
 };

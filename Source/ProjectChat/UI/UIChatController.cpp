@@ -100,7 +100,12 @@ void UIChatController::HideLoginUI()
 void UIChatController::RequestSendLogin(const FString& name)
 {
 	Packetmanager->SendLogin(name);
+	
+}
 
+void UIChatController::RequestConnectServer(int port,std::function<void(void)> onSuccessAction, std::function<void(void)> onFailAction)
+{
+	Packetmanager->ConnectServer(port, onSuccessAction,onFailAction);
 }
 
 

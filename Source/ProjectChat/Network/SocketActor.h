@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <functional>
+
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "SocketActor.generated.h"
@@ -17,9 +19,7 @@ public:
 	// Sets default values for this actor's properties
 	ASocketActor();
 	void SetPacketManager(PacketManager* packetManager);
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	void ConnectServer(int port, std::function<void(void)> successAction, std::function<void(void)> onFailAction);
 
 public:	
 	// Called every frame 
@@ -30,4 +30,5 @@ public:
 private:
 	PacketManager * Packetmanager;
 	uint8 Buffer[2048] = { 0 };
+	bool IsConnected = false;
 };

@@ -21,8 +21,14 @@ void PacketManager::SetServerResponseHandler(ServerResponseHandler* handler)
 
 void PacketManager::SetConnectedSocket(ASocketActor* socket)
 {
-	ConnectedSocket = socket;
+	CurrentSocket = socket;
 }
+
+void PacketManager::ConnectServer(int port, std::function<void(void)> onSuccessAction, std::function<void(void)> onFailAction)
+{
+	CurrentSocket->ConnectServer(port,onSuccessAction,onFailAction);
+}
+
 void PacketManager::SendRoomList()
 {
 
@@ -33,7 +39,7 @@ void PacketManager::SendLogin(const FString& name)
 
 	FString command = FString::Printf(TEXT("/l %s"), *name);
 	//TEXT("/l %s")
-	ConnectedSocket->Send(command);
+	CurrentSocket->Send(command);
 }
 
 
