@@ -20,7 +20,7 @@ class PROJECTCHAT_API UProjectChatGameInstance : public UGameInstance
 	virtual void OnStart() override;
 
 private:
-	UIChatController* Controller;
-	PacketManager* Packetmanager;
+	UIChatController* Controller = nullptr;
+	PacketManager* Packetmanager = nullptr;
 	ASocketActor* SocketActor;
 };

@@ -25,6 +25,8 @@ public:
 	void ConnectServer(int port, std::function<void(void)> onSuccessAction, std::function<void(void)> onFailAction);
 	void SendRoomList();
 	void SendLogin(const FString& name);
+	void SendCreateRoom(const FString& roomName, int32 maxUserCount);
+	void SendChat(const FString& msg);
 	void HandleRecv(const FString& buffer);
 
 

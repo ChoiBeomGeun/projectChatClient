@@ -5,18 +5,20 @@
 #include "CoreMinimal.h"
 #include "Blueprint/IUserObjectListEntry.h"
 #include "Blueprint/UserWidget.h"
-#include "RoomListWidget.generated.h"
+#include "ChatListWidget.generated.h"
 
 /**
  * 
  */
 class UTextBlock;
+
 UCLASS()
-class PROJECTCHAT_API URoomListWidget : public UUserWidget, public IUserObjectListEntry
+class PROJECTCHAT_API UChatListWidget : public UUserWidget, public IUserObjectListEntry
 {
 	GENERATED_BODY()
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	UTextBlock* ListTextBlock = nullptr;
+
 public:
 	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
 };

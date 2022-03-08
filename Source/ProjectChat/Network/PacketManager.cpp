@@ -31,17 +31,32 @@ void PacketManager::ConnectServer(int port, std::function<void(void)> onSuccessA
 
 void PacketManager::SendRoomList()
 {
+	FString command = TEXT("/rl\r\n");
 
+	CurrentSocket->Send(command);
 }
 
 void PacketManager::SendLogin(const FString& name)
 {
 
-	FString command = FString::Printf(TEXT("/l %s"), *name);
+	FString command = FString::Printf(TEXT("/l %s\r\n"), *name);
 	//TEXT("/l %s")
 	CurrentSocket->Send(command);
 }
 
+
+void PacketManager::SendCreateRoom(const FString& roomName,int32 maxUserCount)
+{
+	FString command = FString::Printf(TEXT("/cr %s %d\r\n"), *roomName,maxUserCount);
+	//TEXT("/l %s")
+	CurrentSocket->Send(command);
+}
+
+void PacketManager::SendChat(const FString& msg)
+{
+	//TEXT("/l %s")
+	CurrentSocket->Send(msg);
+}
 
 void PacketManager::HandleRecv(const FString & buffer)
 {

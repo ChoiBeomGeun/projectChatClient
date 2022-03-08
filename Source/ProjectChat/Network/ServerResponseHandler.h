@@ -8,6 +8,7 @@
 
 #include <functional>
 #include <unordered_map>
+
 class UIChatController;
 class PROJECTCHAT_API ServerResponseHandler
 {
@@ -19,8 +20,9 @@ public:
 	void HandleServerResponse(const FString& buffer);
 
 	void OnResponseLogin(const FString& res);
-
-
+	void OnResponseRoomList(const FString& res);
+	void OnResponseRoomEnter(const FString& res);
+	void OnResponseChat(const FString& res);
 
 	void SetController(UIChatController* controller)
 	{
@@ -28,7 +30,9 @@ public:
 	}
 
 private:
+
+	TPair<FString, HandleFunc>* FindCommand(const FString & command);
+
 	UIChatController* Controller;
-	std::unordered_map<std::string, HandleFunc> CommandList;
-	TMap<FString, HandleFunc> CommandMap;
+	TArray<TPair<FString, HandleFunc>> CommandArrayList;
 };

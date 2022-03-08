@@ -22,6 +22,7 @@ void UProjectChatGameInstance::OnStart()
 	Controller->SetWorld(GetWorld());
 	Controller->CreateMainView();
 	Controller->CreateLoginView();
+	Controller->CreateChatView();
 
 
 	FVector Location(0.0f, 0.0f, 0.0f);
