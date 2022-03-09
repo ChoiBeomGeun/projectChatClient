@@ -9,8 +9,8 @@
 /**
  * 
  */
-class PacketManager;
-class UIChatController;
+class USocketManager;
+class UUIChatController;
 class ASocketActor;
 UCLASS()
 class PROJECTCHAT_API UProjectChatGameInstance : public UGameInstance
@@ -18,9 +18,10 @@ class PROJECTCHAT_API UProjectChatGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 	virtual void OnStart() override;
-	virtual void Init() override;
+public:
+	void SetPacketManager(USocketManager* packetManager);
+	USocketManager* GetPacketManager();
 private:
-	UIChatController* Controller = nullptr;
-	PacketManager* Packetmanager = nullptr;
-	ASocketActor* SocketActor;
+	UUIChatController* Controller = nullptr;
+	USocketManager* SocketManager = nullptr;
 };

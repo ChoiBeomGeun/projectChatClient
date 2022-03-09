@@ -10,7 +10,7 @@
 /**
  * 
  */
-class UIChatController;
+class UUIChatController;
 UCLASS()
 class PROJECTCHAT_API UChatListDataObject : public UObject
 {
@@ -20,5 +20,7 @@ class PROJECTCHAT_API UChatListDataObject : public UObject
 public:
 	FString value;
 	int lineCount;
-	UIChatController* Controller;
+	bool IsClientMsg = false;
+	bool IsChatMsg = false;
+	UUIChatController* Controller;
 };

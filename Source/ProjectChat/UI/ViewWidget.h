@@ -7,6 +7,7 @@
 #include "Blueprint/UserWidget.h"
 #include "ViewWidget.generated.h"
 
+class UUIChatController;
 /**
  * 
  */
@@ -17,10 +18,10 @@ class PROJECTCHAT_API UViewWidget : public UUserWidget
 
 public:
 
-	void SetController(UIChatController * controller) 
+	void SetController(UUIChatController* controller)
 	{
 		ChatController = controller;
 	}
 protected:
-	UIChatController* ChatController = nullptr;
+	UUIChatController* ChatController = nullptr;
 };

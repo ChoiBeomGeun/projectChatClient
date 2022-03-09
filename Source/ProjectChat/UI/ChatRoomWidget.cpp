@@ -43,6 +43,8 @@ void UChatRoomWidget::OnClickSendMessage()
 	msg = msg.Replace(L"/", L"") +"\r\n";
 	ChatController->RequestChat(msg);
 	ChatTextBox->SetText(FText::GetEmpty());
+
+	AddChatListItem(msg, 1,true);
 }
 
 void UChatRoomWidget::OnClickBackBtn()
@@ -55,11 +57,13 @@ void UChatRoomWidget::SetRoomName(const FString& roomName)
 	RoomNameTextBlock->SetText(FText::FromString(roomName));
 }
 
-void UChatRoomWidget::AddChatListItem(const FString& res, int newLineCount)
+void UChatRoomWidget::AddChatListItem(const FString& res, int newLineCount,bool isClientMsg)
 {
 	UChatListDataObject* data = NewObject<UChatListDataObject>();
 	data->value = res;
 	data->lineCount = newLineCount;
+	data->IsClientMsg = isClientMsg;
+	data->IsChatMsg = true;
 	UChatListView->AddItem(data);
 	UChatListView->RequestScrollItemIntoView(data);
 	UChatListView->ScrollIndexIntoView(UChatListView->GetNumItems() - 1);

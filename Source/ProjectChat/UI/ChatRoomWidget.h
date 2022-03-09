@@ -29,7 +29,7 @@ public:
 	void OnClickBackBtn();
 
 	void SetRoomName(const FString & roomName);
-	void AddChatListItem(const FString& res, int newLineCount);
+	void AddChatListItem(const FString& res, int newLineCount,bool isClientMsg = false);
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* SendBtn;

@@ -2,17 +2,20 @@
 
 #pragma once
 
-
-
 #include "CoreMinimal.h"
-
-#include <functional>
 #include <unordered_map>
+#include "UObject/NoExportTypes.h"
+#include "ServerResponseHandler.generated.h"
 
-class UIChatController;
-class PROJECTCHAT_API ServerResponseHandler
+class UUIChatController;
+/**
+ * 
+ */
+UCLASS()
+class PROJECTCHAT_API UServerResponseHandler : public UObject
 {
-	using HandleFunc = std::function<void(ServerResponseHandler&, const FString&)>;
+	GENERATED_BODY()
+	using HandleFunc = TFunction<void(UServerResponseHandler&, const FString&)>;
 public:
 	void RegisterCommands();
 
@@ -27,18 +30,16 @@ public:
 	void OnResponseUserList(const FString& res);
 	void OnResponseRoomEnterOtherUser(const FString& res);
 
-	void SetController(UIChatController* controller)
+	void SetController(UUIChatController* controller)
 	{
 		Controller = controller;
 	}
 
 private:
 
-	int AddNewLineToLargeString(FString& command,int newLineCount);
-	TPair<FString, HandleFunc>* FindCommand(const FString & command);
+	int AddNewLineToLargeString(FString& command, int newLineCount);
+	TPair<FString, HandleFunc>* FindCommand(const FString& command);
 
-	UIChatController* Controller;
+	UUIChatController* Controller;
 	std::vector<TPair<FString, HandleFunc>> CommandArrayList;
 };
-
-

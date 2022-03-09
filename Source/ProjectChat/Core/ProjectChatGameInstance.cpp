@@ -5,42 +5,36 @@
 
 #include <string>
 
+#include "ProjectChatGameModeBase.h"
 #include  "Runtime/Networking/Public/Networking.h"
 #include "../UI/UIChatController.h"
-#include "../Network/SocketActor.h"
-#include "../Network/PacketManager.h"
-#include "../Network/ServerResponseHandler.h"
+#include "../Network/SocketManager.h"
+#include "../UI/ServerResponseHandler.h"
+#include "Kismet/GameplayStatics.h"
 
 void UProjectChatGameInstance::OnStart()
 {
 	Super::OnStart();
-	Controller = new UIChatController();
-	Packetmanager = new PacketManager();
-	ServerResponseHandler* responseHandler = new ServerResponseHandler();
 
+}
+
+void UProjectChatGameInstance::SetPacketManager(USocketManager* packetManager)
+{
+	Controller = NewObject<UUIChatController>();
 	Controller->SetWorld(GetWorld());
 	Controller->CreateMainView();
 	Controller->CreateLoginView();
 	Controller->CreateChatView();
 
-	FVector Location(0.0f, 0.0f, 0.0f);
-	FRotator Rotation(0.0f, 0.0f, 0.0f);
-	FActorSpawnParameters SpawnInfo;
-	SocketActor = GetWorld()->SpawnActor<ASocketActor>(Location, Rotation, SpawnInfo);
-
-	responseHandler->SetController(Controller);
-	Packetmanager->SetServerResponseHandler(responseHandler);
-	Packetmanager->SetConnectedSocket(SocketActor);
-	SocketActor->SetPacketManager(Packetmanager);
-	Controller->SetPacketManager(Packetmanager);
-
+	UServerResponseHandler* responseHandler = NewObject<UServerResponseHandler>();
 	responseHandler->RegisterCommands();
+	responseHandler->SetController(Controller);
+	SocketManager = packetManager;
+	SocketManager->SetServerResponseHandler(responseHandler);
+
 }
 
-void UProjectChatGameInstance::Init()
+USocketManager* UProjectChatGameInstance::GetPacketManager()
 {
-	Super::Init();
-
-
-
+	return SocketManager;
 }

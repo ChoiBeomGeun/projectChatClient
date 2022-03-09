@@ -19,5 +19,5 @@ class PROJECTCHAT_API URoomListDataObject : public UObject
 public:
 	FString value;
 	int Index;
-	UIChatController* ChatController;
+	UUIChatController* ChatController;
 };

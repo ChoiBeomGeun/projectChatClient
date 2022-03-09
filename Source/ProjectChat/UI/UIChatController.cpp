@@ -2,33 +2,29 @@
 #include "UIChatController.h"
 #include "ViewWidget.h"
 #include "NotifyMessageWidget.h"
-#include "../Network/PacketManager.h"
+#include "../Network/SocketManager.h"
 #include "../UI/LoginUI.h"
 #include "../UI/MainScreenUIWidget.h"
 #include "../UI/ChatRoomWidget.h"
+#include "ProjectChat/Core/ProjectChatGameInstance.h"
 
-UIChatController::UIChatController()
+UUIChatController::UUIChatController()
 {
 	LoginView = nullptr;
 	MainView = nullptr;
 	ChatView = nullptr;
 }
 
-UIChatController::~UIChatController()
+UUIChatController::~UUIChatController()
 {
 }
 
-void UIChatController::SetPacketManager(PacketManager* packetManager)
+void UUIChatController::SetWorld(UWorld* world)
 {
-	Packetmanager = packetManager;
+	CachedWorld = world;
 }
 
-void UIChatController::SetWorld( UWorld* world)
-{
-	CachedWorld =  world;
-}
-
-void UIChatController::SetName(const FString* name)
+void UUIChatController::SetName(const FString* name)
 {
 
 }
@@ -36,7 +32,7 @@ void UIChatController::SetName(const FString* name)
 //=================================================================================================
 // @brief 로그인 뷰 생성
 //=================================================================================================
-void UIChatController::CreateLoginView()
+void UUIChatController::CreateLoginView()
 {
 	if (LoginView != nullptr)
 	{
@@ -61,7 +57,7 @@ void UIChatController::CreateLoginView()
 //=================================================================================================
 // @brief 메인 뷰 생성
 //=================================================================================================
-void UIChatController::CreateMainView()
+void UUIChatController::CreateMainView()
 {
 	if (MainView != nullptr)
 	{
@@ -79,7 +75,8 @@ void UIChatController::CreateMainView()
 	if (mainUI != nullptr)
 	{
 		mainUI->SetController(this);
-		mainUI->AddToViewport();
+		mainUI->AddToViewport(15);
+		mainUI->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
 
 	MainView = mainUI;
@@ -88,9 +85,9 @@ void UIChatController::CreateMainView()
 //=================================================================================================
 // @brief 채팅 뷰 생성
 //=================================================================================================
-void UIChatController::CreateChatView()
+void UUIChatController::CreateChatView()
 {
-	if(ChatView != nullptr)
+	if (ChatView != nullptr)
 	{
 		return;
 	}
@@ -118,14 +115,14 @@ void UIChatController::CreateChatView()
 // @brief 클라이언트 알림 메시지 생성
 //=================================================================================================
 
-void UIChatController::CreateNotifyMessage(const FString& msg)
+void UUIChatController::CreateNotifyMessage(const FString& msg)
 {
 	UBlueprintGeneratedClass* notifyBlueprint = LoadObject<UBlueprintGeneratedClass>(nullptr, TEXT("WidgetBlueprint'/Game/Blueprints/NotifyMessage.NotifyMessage_C'"));
 	UClass* message;
 	message = Cast<UClass>(notifyBlueprint);
 
 	auto widget = CreateWidget(CachedWorld, message);
-	UNotifyMessageWidget * messageWidget = Cast<UNotifyMessageWidget>(widget);
+	UNotifyMessageWidget* messageWidget = Cast<UNotifyMessageWidget>(widget);
 	if (messageWidget != NULL)
 	{
 		messageWidget->SetText(msg);
@@ -136,17 +133,17 @@ void UIChatController::CreateNotifyMessage(const FString& msg)
 
 }
 
-void UIChatController::CreateRoomList()
+void UUIChatController::CreateRoomList()
 {
 
 }
 
-void UIChatController::RemoveLoginUI()
+void UUIChatController::RemoveLoginUI()
 {
 	LoginView->RemoveFromParent();
 }
 
-void UIChatController::SetMainUI(bool isActive)
+void UUIChatController::SetMainUI(bool isActive)
 {
 	if (isActive == true)
 	{
@@ -161,24 +158,26 @@ void UIChatController::SetMainUI(bool isActive)
 	}
 }
 
-void UIChatController::SetChatUI(bool isActive)
+void UUIChatController::SetChatUI(bool isActive)
 {
-	if(isActive == true)
+	if (isActive == true)
 	{
 		ChatView->SetVisibility(ESlateVisibility::Visible);
+		IsUserIn = true;
 	}
 	else
 	{
+		IsUserIn = false;
 		ChatView->SetVisibility(ESlateVisibility::Collapsed);
 	}
 }
 
-void UIChatController::SetChatUITitle(const FString& title)
+void UUIChatController::SetChatUITitle(const FString& title)
 {
 	ChatView->SetRoomName(title);
 }
 
-void UIChatController::SetWhisperUser(const FString& name)
+void UUIChatController::SetWhisperUser(const FString& name)
 {
 	MainView->SetWhisperUser(name);
 }
@@ -186,7 +185,7 @@ void UIChatController::SetWhisperUser(const FString& name)
 //=================================================================================================
 // @brief 룸 리스트 아이템 추가
 //=================================================================================================
-void UIChatController::AddRoomListItem(const FString& name)
+void UUIChatController::AddRoomListItem(const FString& name)
 {
 	MainView->AddRoomListItem(name);
 }
@@ -194,91 +193,97 @@ void UIChatController::AddRoomListItem(const FString& name)
 //=================================================================================================
 // @brief 채팅 리스트 아이템 추가
 //=================================================================================================
-void UIChatController::AddChatListItem(const FString& name,int newLineCount)
+void UUIChatController::AddChatListItem(const FString& name, int newLineCount)
 {
 	ChatView->AddChatListItem(name, newLineCount);
 }
 //=================================================================================================
 // @brief 유저 리스트 아이템 추가
 //=================================================================================================
-void UIChatController::AddUserListItem(const FString& name)
+void UUIChatController::AddUserListItem(const FString& name)
 {
 	MainView->AddUserListItem(name);
 }
 //=================================================================================================
 // @brief 로그인 패킷 요청
 //=================================================================================================
-void UIChatController::RequestSendLogin(const FString& name)
+void UUIChatController::RequestSendLogin(const FString& name)
 {
-	Packetmanager->SendLogin(name);
-	
+	GetPacketmanager()->SendLogin(name);
+
 }
 //=================================================================================================
 // @brief 서버 연결 패킷 요청
 //=================================================================================================
-void UIChatController::RequestConnectServer(int port,std::function<void(void)> onSuccessAction, std::function<void(void)> onFailAction)
+void UUIChatController::RequestConnectServer(int port, TFunction<void(void)> onSuccessAction, TFunction<void(void)> onFailAction)
 {
-	Packetmanager->ConnectServer(port, onSuccessAction,onFailAction);
+	GetPacketmanager()->ConnectServer(port, onSuccessAction, onFailAction);
 }
 //=================================================================================================
 // @brief 방 목록 패킷 요청
 //=================================================================================================
-void UIChatController::RequestSendRoomList()
+void UUIChatController::RequestSendRoomList()
 {
 	MainView->ClearRoomList();
-	Packetmanager->SendRoomList();
+	GetPacketmanager()->SendRoomList();
 }
 //=================================================================================================
 // @brief 방 생성 요청
 //=================================================================================================
-void UIChatController::RequestCreateRoom(const FString& roomName, int32 maxUserCount)
+void UUIChatController::RequestCreateRoom(const FString& roomName, int32 maxUserCount)
 {
-	Packetmanager->SendCreateRoom(roomName, maxUserCount);
+	GetPacketmanager()->SendCreateRoom(roomName, maxUserCount);
 }
 //=================================================================================================
 // @brief 메시지 전송 패킷 요청
 //=================================================================================================
-void UIChatController::RequestChat(const FString& msg)
+void UUIChatController::RequestChat(const FString& msg)
 {
-	Packetmanager->SendChat(msg);
+	GetPacketmanager()->SendChat(msg);
 }
 
 //=================================================================================================
 // @brief 메시지 전송 패킷 요청
 //=================================================================================================
-void UIChatController::RequestExitRoom()
+void UUIChatController::RequestExitRoom()
 {
 	SetChatUI(false);
-	Packetmanager->SendExitRoom();
+	GetPacketmanager()->SendExitRoom();
 }
 //=================================================================================================
 // @brief 방 입장 패킷 요청
 //=================================================================================================
-void UIChatController::RequestEnterRoom(int index)
+void UUIChatController::RequestEnterRoom(int index)
 {
-	Packetmanager->SendEnterRoom(index);
+	GetPacketmanager()->SendEnterRoom(index);
 }
 //=================================================================================================
 // @brief 유저 리스트 패킷 요청
 //=================================================================================================
-void UIChatController::RequestUserList()
+void UUIChatController::RequestUserList()
 {
-	Packetmanager->SendUserList();
+	GetPacketmanager()->SendUserList();
 }
 
-void UIChatController::RequestWhisper(const FString& msg, const FString& name)
+void UUIChatController::RequestWhisper(const FString& msg, const FString& name)
 {
-	Packetmanager->SendWhispher(msg, name);
+	GetPacketmanager()->SendWhispher(msg, name);
 }
 
 //=================================================================================================
 // @brief 유저가 채팅방에 접속했는지 체크
 //=================================================================================================
 
-bool UIChatController::IsUserInChatRoom()
+bool UUIChatController::IsUserInChatRoom()
 {
-	if (ChatView == nullptr) return false;
-	return ChatView->Visibility == ESlateVisibility::Visible;
+	return IsUserIn;
+}
+
+USocketManager* UUIChatController::GetPacketmanager()
+{
+	auto gameInstance = CachedWorld->GetGameInstance();
+	UProjectChatGameInstance* GameInstanceRef = Cast<UProjectChatGameInstance>(gameInstance);
+	return GameInstanceRef->GetPacketManager();
 }
 
 

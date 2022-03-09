@@ -29,6 +29,18 @@ void UChatListWidget::NativeOnListItemObjectSet(UObject* ListItemObject)
 			InvisibleButton->OnClicked.RemoveAll(this);
 			InvisibleButton->OnClicked.AddDynamic(this, &UChatListWidget::OnClickBtn);
 		}
+
+		if(data->IsChatMsg)
+		{
+			if(data->IsClientMsg)
+			{
+				ListTextBlock->SetJustification(ETextJustify::Right);
+			}
+			else
+			{
+				ListTextBlock->SetJustification(ETextJustify::Left);
+			}
+		}
 		//UCanvasPanelSlot* canvas = Cast<UCanvasPanelSlot>(ListTextBlock->Slot);
 		//FVector2D curSize = canvas->GetSize();
 		//curSize.Y = (curSize.Y * data->lineCount);
