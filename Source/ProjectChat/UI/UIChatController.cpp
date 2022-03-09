@@ -27,6 +27,12 @@ void UIChatController::SetWorld( UWorld* world)
 {
 	CachedWorld =  world;
 }
+
+void UIChatController::SetName(const FString* name)
+{
+
+}
+
 //=================================================================================================
 // @brief 로그인 뷰 생성
 //=================================================================================================
@@ -143,12 +149,14 @@ void UIChatController::SetMainUI(bool isActive)
 {
 	if (isActive == true)
 	{
-		MainView->SetVisibility(ESlateVisibility::Visible);
-		MainView->ShowChatCanvas();
+		MainView->SetChatCanvas(true);
+		MainView->SetRoomCreateCanvas(false);
+		MainView->SetUserListCanvas(true);
 	}
 	else
 	{
-		MainView->SetVisibility(ESlateVisibility::Collapsed);
+		MainView->SetChatCanvas(false);
+		MainView->SetRoomCreateCanvas(false);
 	}
 }
 
@@ -168,6 +176,7 @@ void UIChatController::SetChatUITitle(const FString& title)
 {
 	ChatView->SetRoomName(title);
 }
+
 //=================================================================================================
 // @brief 룸 리스트 아이템 추가
 //=================================================================================================
@@ -179,11 +188,17 @@ void UIChatController::AddRoomListItem(const FString& name)
 //=================================================================================================
 // @brief 채팅 리스트 아이템 추가
 //=================================================================================================
-void UIChatController::AddChatListItem(const FString& name)
+void UIChatController::AddChatListItem(const FString& name,int newLineCount)
 {
-	ChatView->AddChatListItem(name);
+	ChatView->AddChatListItem(name, newLineCount);
 }
-
+//=================================================================================================
+// @brief 유저 리스트 아이템 추가
+//=================================================================================================
+void UIChatController::AddUserListItem(const FString& name)
+{
+	MainView->AddUserListItem(name);
+}
 //=================================================================================================
 // @brief 로그인 패킷 요청
 //=================================================================================================
@@ -204,6 +219,7 @@ void UIChatController::RequestConnectServer(int port,std::function<void(void)> o
 //=================================================================================================
 void UIChatController::RequestSendRoomList()
 {
+	MainView->ClearRoomList();
 	Packetmanager->SendRoomList();
 }
 //=================================================================================================
@@ -220,6 +236,35 @@ void UIChatController::RequestChat(const FString& msg)
 {
 	Packetmanager->SendChat(msg);
 }
+
+//=================================================================================================
+// @brief 메시지 전송 패킷 요청
+//=================================================================================================
+void UIChatController::RequestExitRoom()
+{
+	SetChatUI(false);
+	Packetmanager->SendExitRoom();
+}
+//=================================================================================================
+// @brief 방 입장 패킷 요청
+//=================================================================================================
+void UIChatController::RequestEnterRoom(int index)
+{
+	Packetmanager->SendEnterRoom(index);
+}
+//=================================================================================================
+// @brief 유저 리스트 패킷 요청
+//=================================================================================================
+void UIChatController::RequestUserList()
+{
+	Packetmanager->SendUserList();
+}
+
+void UIChatController::RequestWhisper(const FString& msg, const FString& name)
+{
+	Packetmanager->SendWhispher(msg, name);
+}
+
 //=================================================================================================
 // @brief 유저가 채팅방에 접속했는지 체크
 //=================================================================================================

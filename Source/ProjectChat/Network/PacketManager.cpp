@@ -38,9 +38,7 @@ void PacketManager::SendRoomList()
 
 void PacketManager::SendLogin(const FString& name)
 {
-
 	FString command = FString::Printf(TEXT("/l %s\r\n"), *name);
-	//TEXT("/l %s")
 	CurrentSocket->Send(command);
 }
 
@@ -48,24 +46,42 @@ void PacketManager::SendLogin(const FString& name)
 void PacketManager::SendCreateRoom(const FString& roomName,int32 maxUserCount)
 {
 	FString command = FString::Printf(TEXT("/cr %s %d\r\n"), *roomName,maxUserCount);
-	//TEXT("/l %s")
 	CurrentSocket->Send(command);
 }
 
 void PacketManager::SendChat(const FString& msg)
 {
-	//TEXT("/l %s")
 	CurrentSocket->Send(msg);
+}
+
+void PacketManager::SendExitRoom()
+{
+	FString command = FString(TEXT("/exit\r\n"));
+	CurrentSocket->Send(command);
+}
+
+void PacketManager::SendEnterRoom(int index)
+{
+	FString command = FString::Printf(TEXT("/er %d\r\n"), index);
+	CurrentSocket->Send(command);
+}
+
+
+void PacketManager::SendUserList()
+{
+	FString command = FString(TEXT("/ul\r\n"));
+	CurrentSocket->Send(command);
+}
+
+void PacketManager::SendWhispher(const FString& msg, const FString& name)
+{
+	FString command = FString::Printf(TEXT("/w %s %s\r\n"), *name,*msg);
+	CurrentSocket->Send(command);
 }
 
 void PacketManager::HandleRecv(const FString & buffer)
 {
-
 	ResponseHandler->HandleServerResponse(buffer);
-
-
-
-
 }
 
 TArray<FString> PacketManager::SplitString(char* target, const char* delimiter)

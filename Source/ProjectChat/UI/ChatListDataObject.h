@@ -3,12 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ChatRoomWidget.h"
 #include "UObject/NoExportTypes.h"
 #include "ChatListDataObject.generated.h"
 
 /**
  * 
  */
+class UIChatController;
 UCLASS()
 class PROJECTCHAT_API UChatListDataObject : public UObject
 {
@@ -17,4 +19,6 @@ class PROJECTCHAT_API UChatListDataObject : public UObject
 
 public:
 	FString value;
+	int lineCount;
+	UIChatController* Controller;
 };

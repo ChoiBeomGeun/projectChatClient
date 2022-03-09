@@ -11,5 +11,16 @@ void URoomListWidget::NativeOnListItemObjectSet(UObject* ListItemObject)
 	if (data)
 	{
 		ListTextBlock->SetText(FText::FromString(data->value));
+		Index = data->Index;
+		SetController(data->ChatController);
+	
+		RoomButton->OnClicked.RemoveAll(this);
+		RoomButton->OnClicked.AddDynamic(this, &URoomListWidget::OnClickRoom);
 	}
+}
+
+void URoomListWidget::OnClickRoom()
+{
+	ChatController->RequestEnterRoom(Index);
+
 }

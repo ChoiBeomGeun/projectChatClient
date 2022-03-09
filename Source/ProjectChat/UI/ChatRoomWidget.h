@@ -20,12 +20,16 @@ class PROJECTCHAT_API UChatRoomWidget : public UViewWidget
 	GENERATED_BODY()
 
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 public:
 	UFUNCTION()
 	void OnClickSendMessage();
 
+	UFUNCTION()
+	void OnClickBackBtn();
+
 	void SetRoomName(const FString & roomName);
-	void AddChatListItem(const FString& res);
+	void AddChatListItem(const FString& res, int newLineCount);
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* SendBtn;
@@ -38,4 +42,7 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	UEditableTextBox* ChatTextBox;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* BackBtn;
 };

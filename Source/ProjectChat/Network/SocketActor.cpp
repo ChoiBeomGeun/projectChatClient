@@ -95,7 +95,7 @@ void ASocketActor::Tick(float DeltaTime)
 				{
 					Packetmanager->HandleRecv(splitResult[i]);
 				}
-
+				delete pStr;
 				memset(Buffer, 0, 2048);
 			}
 		}
@@ -105,12 +105,18 @@ void ASocketActor::Tick(float DeltaTime)
 
 void ASocketActor::Send(const FString& string)
 {
-	char* result = TCHAR_TO_ANSI(*string);
+	wchar_t* strUnicode = const_cast<wchar_t*>(ToCStr(string));
+	char* strMultibyte = new char[GetNum(string)];
+	int len = WideCharToMultiByte(CP_ACP, 0, strUnicode, -1, NULL, 0, NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, strUnicode, -1, strMultibyte, len, NULL, NULL);
 	int sendBytes = 0;
-	if (Socket->Send(reinterpret_cast<uint8*>(result),string.Len() ,sendBytes))
+
+	if (Socket->Send(reinterpret_cast<uint8*>(strMultibyte), len,sendBytes))
 	{
 
 	}
+
+	delete strMultibyte;
 }
 TArray<FString> ASocketActor::SplitString(wchar_t* target, const wchar_t* delimiter)
 {

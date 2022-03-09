@@ -3,8 +3,10 @@
 
 #include "MainScreenUIWidget.h"
 
+#include "ChatListDataObject.h"
 #include "CountBoxWidget.h"
 #include "RoomListDataObject.h"
+#include "RoomListWidget.h"
 #include "Components/ListView.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
@@ -32,55 +34,93 @@ void UMainScreenUIWidget::NativeConstruct()
 	SpawnBtn->OnClicked.RemoveAll(this);
 	SpawnBtn->OnClicked.AddDynamic(this, &UMainScreenUIWidget::OnClickSpawnRoomBtn);
 
+	UserRefreshButton->OnClicked.RemoveAll(this);
+	UserRefreshButton->OnClicked.AddDynamic(this, &UMainScreenUIWidget::OnClickUserRefreshBtn);
+
+	WhisperButton->OnClicked.RemoveAll(this);
+	WhisperButton->OnClicked.AddDynamic(this, &UMainScreenUIWidget::OnClickWhisper);
 
 	ChatCanvas->SetVisibility(ESlateVisibility::Collapsed);
 	RoomCreateCanvas->SetVisibility(ESlateVisibility::Collapsed);
+	UserListCanvas->SetVisibility(ESlateVisibility::Collapsed);
 
 	URoomListView->OnEntryWidgetGenerated().AddLambda([](UUserWidget& uw)
 	{
 		auto* textBlock = Cast<UTextBlock>(uw.GetWidgetFromName(FName(TEXT("ListTextBlock"))));
-		textBlock->SetText(FText::AsNumber(50.f));
+		/*textBlock->SetText(FText::AsNumber(50.f));*/
 	});
 
 	URoomListView->ClearListItems();
 }
 
-
+//=================================================================================================
+// @brief 룸 리스트 아이템 추가
+//=================================================================================================
 void UMainScreenUIWidget::AddRoomListItem(const FString& res)
 {
 	URoomListDataObject* data = NewObject<URoomListDataObject>();
 	data->value = res;
-
+	data->Index = URoomListView->GetNumItems();
+	data->ChatController = ChatController;
 	URoomListView->AddItem(data);
+
+	EmptyRoomListDes->SetVisibility(ESlateVisibility::Collapsed);
+}
+//=================================================================================================
+// @brief 유저 리스트 아이템 추가
+//=================================================================================================
+void UMainScreenUIWidget::AddUserListItem(const FString& res)
+{
+	UChatListDataObject* data = NewObject<UChatListDataObject>();
+	data->value = res;
+	data->lineCount = 1;
+	data->Controller = ChatController;
+	UUserListView->AddItem(data);
+	UUserListView->RequestScrollItemIntoView(data);
+	UUserListView->ScrollIndexIntoView(UUserListView->GetNumItems() - 1);
+}
+//=================================================================================================
+// @brief 귓속말 상대 지정
+//=================================================================================================
+void UMainScreenUIWidget::SetWhisperUser(const FString& res)
+{
+	WhisperTextBox->SetHintText(FText::FromString(res));
 }
 
-void UMainScreenUIWidget::SetRoomListItems()
+void UMainScreenUIWidget::SetUserListCanvas(bool isActive)
 {
-	TArray<URoomListDataObject*> Datas;
-	for (int i = 0; i < 10; i++)
+	if (isActive)
 	{
-		URoomListDataObject * data = NewObject<URoomListDataObject>();
-
-		data->value = FString::Printf(TEXT("text%d"), i);
-		Datas.Add(data);
+		UserListCanvas->SetVisibility(ESlateVisibility::Visible);
 	}
-
-
-	URoomListView = Cast<UListView>(GetWidgetFromName(FName(TEXT("ListViewTest"))));
-	URoomListView->OnEntryWidgetGenerated().AddLambda([](UUserWidget& uw)
-		{
-			auto* textBlock = Cast<UTextBlock>(uw.GetWidgetFromName(FName(TEXT("ListTextBlock"))));
-			textBlock->SetText(FText::AsNumber(50.f));
-		});
-
-	URoomListView->ClearListItems();
-	URoomListView->SetListItems(Datas);
-
+	else
+	{
+		UserListCanvas->SetVisibility(ESlateVisibility::Collapsed);
+	}
 }
 
-void UMainScreenUIWidget::ShowChatCanvas()
+void UMainScreenUIWidget::SetChatCanvas(bool isActive)
 {
-	ChatCanvas->SetVisibility(ESlateVisibility::Visible);
+	if (isActive)
+	{
+		ChatCanvas->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		ChatCanvas->SetVisibility(ESlateVisibility::Collapsed);
+	}
+}
+
+void UMainScreenUIWidget::SetRoomCreateCanvas(bool isActive)
+{
+	if (isActive)
+	{
+		RoomCreateCanvas->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		RoomCreateCanvas->SetVisibility(ESlateVisibility::Collapsed);
+	}
 }
 
 void UMainScreenUIWidget::SetEmptyRoomDes(bool isVisible)
@@ -95,7 +135,17 @@ void UMainScreenUIWidget::SetEmptyRoomDes(bool isVisible)
 	}
 
 }
-
+//=================================================================================================
+// @brief 룸 리스트 아이템 정리
+//=================================================================================================
+void UMainScreenUIWidget::ClearRoomList()
+{
+	URoomListView->ClearListItems();
+	EmptyRoomListDes->SetVisibility(ESlateVisibility::Visible);
+}
+//=================================================================================================
+// @brief 방 생성 오브젝트 껐다 키는 함수
+//=================================================================================================
 void UMainScreenUIWidget::ToggleCreateRoom()
 {
 	if(RoomCreateCanvas->Visibility == ESlateVisibility::Visible)
@@ -130,4 +180,13 @@ void UMainScreenUIWidget::OnClickSpawnRoomBtn()
 	ChatController->RequestCreateRoom(roomName, maxUserValue);
 }
 
+void UMainScreenUIWidget::OnClickUserRefreshBtn()
+{
+	UUserListView->ClearListItems();
+	ChatController->RequestUserList();
+}
 
+void UMainScreenUIWidget::OnClickWhisper()
+{
+	ChatController->RequestWhisper(WhisperTextBox->GetText().ToString(), WhisperTextBox->HintText.ToString());
+}

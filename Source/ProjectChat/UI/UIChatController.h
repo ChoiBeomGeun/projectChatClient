@@ -21,6 +21,7 @@ public:
 	~UIChatController();
 	void SetPacketManager(PacketManager* packetManager);
 	void SetWorld(UWorld * world);
+	void SetName(const FString* name);
 
 	void CreateLoginView();
 	void CreateMainView();
@@ -34,19 +35,24 @@ public:
 	void SetChatUITitle(const FString& title);
 
 	void AddRoomListItem(const FString& name);
-	void AddChatListItem(const FString& name);
+	void AddChatListItem(const FString& name,int newLineCount);
+	void AddUserListItem(const FString& name);
 
 	void RequestSendLogin(const FString& name);
 	void RequestConnectServer(int port, std::function<void(void)> onSuccessAction, std::function<void(void)> onFailAction);
 	void RequestSendRoomList();
 	void RequestCreateRoom(const FString & roomName, int32 maxUserCount);
 	void RequestChat(const FString& msg);
+	void RequestExitRoom();
+	void RequestEnterRoom(int index);
+	void RequestUserList();
+	void RequestWhisper(const FString& msg,const FString & name);
 
 	bool IsUserInChatRoom();
 private:
 
 	UWorld* CachedWorld;
-
+	FString playerName;
 private:
 	PacketManager* Packetmanager;
 	//views

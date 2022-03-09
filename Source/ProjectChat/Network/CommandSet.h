@@ -8,5 +8,16 @@ namespace CommandTable
 	const FString LoginSuccess = TEXT("로그인에 성공");
 	const FString RoomListItem = TEXT("방 번호");
 	const FString EnterRoom = TEXT("입장하셨습니다");
+	const FString ExitRoom = TEXT("나갔습니다");
+	const FString Whisper = TEXT("귓속말");
+	const FString UserListItem = TEXT("유저 닉네임");
+}
 
+
+namespace StringTable
+{
+	const FString LoginSuccess = TEXT("로그인에 성공");
+	const FString RoomListItem = TEXT("방 번호");
+	const FString EnterRoom = TEXT("입장하셨습니다");
+	const FString ExitRoom = TEXT("나갔습니다");
 }

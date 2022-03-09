@@ -24,7 +24,6 @@ void UProjectChatGameInstance::OnStart()
 	Controller->CreateLoginView();
 	Controller->CreateChatView();
 
-
 	FVector Location(0.0f, 0.0f, 0.0f);
 	FRotator Rotation(0.0f, 0.0f, 0.0f);
 	FActorSpawnParameters SpawnInfo;
@@ -35,4 +34,6 @@ void UProjectChatGameInstance::OnStart()
 	Packetmanager->SetConnectedSocket(SocketActor);
 	SocketActor->SetPacketManager(Packetmanager);
 	Controller->SetPacketManager(Packetmanager);
+
+	responseHandler->RegisterCommands();
 }

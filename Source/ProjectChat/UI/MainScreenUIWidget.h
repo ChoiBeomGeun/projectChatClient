@@ -33,12 +33,13 @@ public:
 	}
 
 	void AddRoomListItem(const FString& res);
-
-	void SetRoomListItems();
-
-	void ShowChatCanvas();
-
+	void AddUserListItem(const FString& res);
+	void SetWhisperUser(const FString& res);
+	void SetUserListCanvas(bool isActive);
+	void SetChatCanvas(bool isActive);
+	void SetRoomCreateCanvas(bool isActive);
 	void SetEmptyRoomDes(bool isVisible);
+	void ClearRoomList();
 
 private:
 
@@ -47,6 +48,12 @@ private:
 
 	UFUNCTION()
 	void OnClickSpawnRoomBtn();
+
+	UFUNCTION()
+	void OnClickUserRefreshBtn();
+
+	UFUNCTION()
+	void OnClickWhisper();
 
 	UFUNCTION()
 	void ToggleCreateRoom();
@@ -60,6 +67,9 @@ private:
 	UListView* URoomListView;
 
 	UPROPERTY(meta = (BindWidget))
+	UListView* UUserListView;
+
+	UPROPERTY(meta = (BindWidget))
 	UButton* PlusButton;
 
 	UPROPERTY(meta = (BindWidget))
@@ -67,6 +77,12 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* SpawnBtn;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* UserRefreshButton;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* WhisperButton;
 
 	UPROPERTY(meta = (BindWidget))
 	UCanvasPanel* ChatCanvas;
@@ -78,9 +94,15 @@ private:
 	UWidget* RoomCreateCanvas;
 
 	UPROPERTY(meta = (BindWidget))
+	UWidget* UserListCanvas;
+
+	UPROPERTY(meta = (BindWidget))
 	UCountBoxWidget* CountBoxWidget;
 
 	UPROPERTY(meta = (BindWidget))
 	UEditableTextBox* RoomNameTextBox;
+
+	UPROPERTY(meta = (BindWidget))
+	UEditableTextBox* WhisperTextBox;
 	
 };

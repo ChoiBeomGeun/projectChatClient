@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/Button.h"
+#include "UIChatController.h"
 #include "UObject/NoExportTypes.h"
 #include "RoomListDataObject.generated.h"
 
@@ -16,4 +18,6 @@ class PROJECTCHAT_API URoomListDataObject : public UObject
 
 public:
 	FString value;
+	int Index;
+	UIChatController* ChatController;
 };

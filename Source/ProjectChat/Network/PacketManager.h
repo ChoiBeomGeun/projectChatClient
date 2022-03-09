@@ -27,6 +27,10 @@ public:
 	void SendLogin(const FString& name);
 	void SendCreateRoom(const FString& roomName, int32 maxUserCount);
 	void SendChat(const FString& msg);
+	void SendExitRoom();
+	void SendEnterRoom(int index);
+	void SendUserList();
+	void SendWhispher(const FString& msg, const FString& name);
 	void HandleRecv(const FString& buffer);
 
 

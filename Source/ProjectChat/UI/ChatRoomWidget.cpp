@@ -14,6 +14,9 @@ void UChatRoomWidget::NativeConstruct()
 	SendBtn->OnClicked.RemoveAll(this);
 	SendBtn->OnClicked.AddDynamic(this, &UChatRoomWidget::OnClickSendMessage);
 
+	BackBtn->OnClicked.RemoveAll(this);
+	BackBtn->OnClicked.AddDynamic(this, &UChatRoomWidget::OnClickBackBtn);
+
 	UChatListView->OnEntryWidgetGenerated().AddLambda([](UUserWidget& uw)
 		{
 			auto* textBlock = Cast<UTextBlock>(uw.GetWidgetFromName(FName(TEXT("ListTextBlock"))));
@@ -21,6 +24,12 @@ void UChatRoomWidget::NativeConstruct()
 		});
 
 	UChatListView->ClearListItems();
+}
+
+void UChatRoomWidget::NativeDestruct()
+{
+	Super::NativeDestruct();
+	if(ChatController->IsUserInChatRoom()) ChatController->RequestExitRoom();
 }
 
 void UChatRoomWidget::OnClickSendMessage()
@@ -35,6 +44,13 @@ void UChatRoomWidget::OnClickSendMessage()
 	ChatController->RequestChat(msg);
 	ChatTextBox->SetText(FText::GetEmpty());
 
+
+
+}
+
+void UChatRoomWidget::OnClickBackBtn()
+{
+	ChatController->RequestExitRoom();
 }
 
 void UChatRoomWidget::SetRoomName(const FString& roomName)
@@ -42,11 +58,12 @@ void UChatRoomWidget::SetRoomName(const FString& roomName)
 	RoomNameTextBlock->SetText(FText::FromString(roomName));
 }
 
-void UChatRoomWidget::AddChatListItem(const FString& res)
+void UChatRoomWidget::AddChatListItem(const FString& res, int newLineCount)
 {
 	UChatListDataObject* data = NewObject<UChatListDataObject>();
 	data->value = res;
-
+	data->lineCount = newLineCount;
 	UChatListView->AddItem(data);
+	UChatListView->RequestScrollItemIntoView(data);
 	UChatListView->ScrollIndexIntoView(UChatListView->GetNumItems() - 1);
 }
