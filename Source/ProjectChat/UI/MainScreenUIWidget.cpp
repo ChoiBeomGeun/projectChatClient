@@ -40,6 +40,12 @@ void UMainScreenUIWidget::NativeConstruct()
 	WhisperButton->OnClicked.RemoveAll(this);
 	WhisperButton->OnClicked.AddDynamic(this, &UMainScreenUIWidget::OnClickWhisper);
 
+	ExitButton->OnClicked.RemoveAll(this);
+	ExitButton->OnClicked.AddDynamic(this, &UMainScreenUIWidget::OnClickExit);
+
+	LogButton->OnClicked.RemoveAll(this);
+	LogButton->OnClicked.AddDynamic(this, &UMainScreenUIWidget::ToggleLog);
+
 	ChatCanvas->SetVisibility(ESlateVisibility::Collapsed);
 	RoomCreateCanvas->SetVisibility(ESlateVisibility::Collapsed);
 	UserListCanvas->SetVisibility(ESlateVisibility::Collapsed);
@@ -78,6 +84,20 @@ void UMainScreenUIWidget::AddUserListItem(const FString& res)
 	UUserListView->AddItem(data);
 	UUserListView->RequestScrollItemIntoView(data);
 	UUserListView->ScrollIndexIntoView(UUserListView->GetNumItems() - 1);
+}
+
+//=================================================================================================
+// @brief 로그 리스트 아이템 추가
+//=================================================================================================
+void UMainScreenUIWidget::AddLogListItem(const FString& res)
+{
+	UChatListDataObject* data = NewObject<UChatListDataObject>();
+	data->value = res;
+	data->lineCount = 1;
+	data->Controller = ChatController;
+	ULogListView->AddItem(data);
+	ULogListView->RequestScrollItemIntoView(data);
+	ULogListView->ScrollIndexIntoView(ULogListView->GetNumItems() - 1);
 }
 //=================================================================================================
 // @brief 귓속말 상대 지정
@@ -123,6 +143,18 @@ void UMainScreenUIWidget::SetRoomCreateCanvas(bool isActive)
 	}
 }
 
+void UMainScreenUIWidget::SetLogCanvas(bool isActive)
+{
+	if (isActive)
+	{
+		LogListCanvas->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		LogListCanvas->SetVisibility(ESlateVisibility::Collapsed);
+	}
+}
+
 void UMainScreenUIWidget::SetEmptyRoomDes(bool isVisible)
 {
 	if(isVisible)
@@ -159,6 +191,23 @@ void UMainScreenUIWidget::ToggleCreateRoom()
 
 }
 
+void UMainScreenUIWidget::OnClickExit()
+{
+	FGenericPlatformMisc::RequestExit(false);
+}
+
+void UMainScreenUIWidget::ToggleLog()
+{
+	if (LogListCanvas->Visibility == ESlateVisibility::Visible)
+	{
+		LogListCanvas->SetVisibility(ESlateVisibility::Collapsed);
+	}
+	else
+	{
+		LogListCanvas->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
 
 void UMainScreenUIWidget::OnClickRefreshBtn()
 {
@@ -188,5 +237,18 @@ void UMainScreenUIWidget::OnClickUserRefreshBtn()
 
 void UMainScreenUIWidget::OnClickWhisper()
 {
+	if (WhisperTextBox->HintText.IsEmpty())
+	{
+		ChatController->CreateNotifyMessage(TEXT("상대방을 선택하세요!"));
+		return;
+	}
+
+	if(WhisperTextBox->GetText().IsEmpty())
+	{
+		ChatController->CreateNotifyMessage(TEXT("내용을 입력하세요!"));
+		return;
+	}
+	
 	ChatController->RequestWhisper(WhisperTextBox->GetText().ToString(), WhisperTextBox->HintText.ToString());
 }
+

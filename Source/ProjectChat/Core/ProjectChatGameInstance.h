@@ -18,7 +18,7 @@ class PROJECTCHAT_API UProjectChatGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 	virtual void OnStart() override;
-
+	virtual void Init() override;
 private:
 	UIChatController* Controller = nullptr;
 	PacketManager* Packetmanager = nullptr;

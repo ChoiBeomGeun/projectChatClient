@@ -27,8 +27,6 @@ void ASocketActor::SetPacketManager(PacketManager* packetManager)
 
 void ASocketActor::ConnectServer(int port, std::function<void(void)> successAction, std::function<void(void)> onFailAction)
 {
-	Super::BeginPlay();
-
 	Socket = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateSocket(NAME_Stream, TEXT("default"), false);
 
 	FString address = TEXT("127.0.0.1");
@@ -65,15 +63,17 @@ void ASocketActor::Tick(float DeltaTime)
 		return;
 	}
 
-	uint32 DataSize = 0;
-	int32 DataLen = 0;
-	//uint8 Buffer[2048] = { 0 };
+	uint32 pendingSize = 0;
 
-	if (Socket->HasPendingData(DataSize))
+	if (Socket->HasPendingData(pendingSize))
 	{
+		int recvByte = 0;
+		bool isReceived = Socket->Recv(Buffer + recvByte, BUFFER_SIZE-RecvBytes, recvByte);
 
-		if (Socket->Recv(Buffer, sizeof(Buffer) - 1, DataLen))
+		if (isReceived)
 		{
+			RecvBytes += recvByte;
+
 			char* str = reinterpret_cast<char*>(Buffer);
 			wchar_t* pStr;
 			int strSize = MultiByteToWideChar(CP_ACP, 0, str, -1, NULL, NULL);
@@ -88,15 +88,21 @@ void ASocketActor::Tick(float DeltaTime)
 			}
 			else
 			{
-		
-
-				TArray<FString> splitResult= SplitString(pStr, L"\r\n");
-				for (int i = 0; i < splitResult.Num(); i++)
+				if(pStr == nullptr)
 				{
-					Packetmanager->HandleRecv(splitResult[i]);
+					InitBuffer();
+					return;
 				}
-				delete pStr;
-				memset(Buffer, 0, 2048);
+				else
+				{
+					TArray<FString> splitResult = SplitString(pStr, L"\r\n");
+					for (int i = 0; i < splitResult.Num(); i++)
+					{
+						Packetmanager->HandleRecv(splitResult[i]);
+					}
+					delete pStr;
+					InitBuffer();
+				}
 			}
 		}
 
@@ -111,12 +117,20 @@ void ASocketActor::Send(const FString& string)
 	WideCharToMultiByte(CP_ACP, 0, strUnicode, -1, strMultibyte, len, NULL, NULL);
 	int sendBytes = 0;
 
-	if (Socket->Send(reinterpret_cast<uint8*>(strMultibyte), len,sendBytes))
+	if (strMultibyte == nullptr)
 	{
-
+		InitBuffer();
+		return;
 	}
+	else
+	{
+		if (Socket->Send(reinterpret_cast<uint8*>(strMultibyte), len, sendBytes))
+		{
 
-	delete strMultibyte;
+		}
+
+		delete strMultibyte;
+	}
 }
 TArray<FString> ASocketActor::SplitString(wchar_t* target, const wchar_t* delimiter)
 {
@@ -131,5 +145,9 @@ TArray<FString> ASocketActor::SplitString(wchar_t* target, const wchar_t* delimi
 	}
 	return splitStrings;
 }
-
+void ASocketActor::InitBuffer()
+{
+	memset(Buffer, 0, 2048);
+	RecvBytes = 0;
+}
 

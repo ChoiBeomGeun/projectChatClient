@@ -14,7 +14,6 @@
 void UProjectChatGameInstance::OnStart()
 {
 	Super::OnStart();
-
 	Controller = new UIChatController();
 	Packetmanager = new PacketManager();
 	ServerResponseHandler* responseHandler = new ServerResponseHandler();
@@ -36,4 +35,12 @@ void UProjectChatGameInstance::OnStart()
 	Controller->SetPacketManager(Packetmanager);
 
 	responseHandler->RegisterCommands();
+}
+
+void UProjectChatGameInstance::Init()
+{
+	Super::Init();
+
+
+
 }

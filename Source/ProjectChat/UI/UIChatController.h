@@ -33,6 +33,7 @@ public:
 	void SetMainUI(bool isActive);
 	void SetChatUI(bool isActive);
 	void SetChatUITitle(const FString& title);
+	void SetWhisperUser(const FString& name);
 
 	void AddRoomListItem(const FString& name);
 	void AddChatListItem(const FString& name,int newLineCount);
@@ -50,6 +51,7 @@ public:
 
 	bool IsUserInChatRoom();
 private:
+
 
 	UWorld* CachedWorld;
 	FString playerName;

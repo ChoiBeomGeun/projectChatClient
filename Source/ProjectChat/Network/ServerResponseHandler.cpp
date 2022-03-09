@@ -20,11 +20,13 @@ void ServerResponseHandler::RegisterCommands()
 	CommandArrayList.emplace_back(TPair<FString, HandleFunc >(CommandTable::EnterRoom, HandleFunc(&ServerResponseHandler::OnResponseRoomEnter)));
 	CommandArrayList.emplace_back(TPair<FString, HandleFunc >(CommandTable::ExitRoom, HandleFunc(&ServerResponseHandler::OnResponseExit)));
 	CommandArrayList.emplace_back(TPair<FString, HandleFunc >(CommandTable::UserListItem, HandleFunc(&ServerResponseHandler::OnResponseUserList)));
+	CommandArrayList.emplace_back(TPair<FString, HandleFunc >(CommandTable::EnterRoomOtherUser, HandleFunc(&ServerResponseHandler::OnResponseRoomEnterOtherUser)));
 }
 
 void ServerResponseHandler::HandleServerResponse(const FString& buffer)
 {
-	if(buffer.Contains(CommandTable::Whisper) == false && Controller->IsUserInChatRoom())
+	// 귓속말과 다른 상대가 방에 들어왔다는 서버 커맨드를 제외하고 출력한다.
+	if(buffer.Contains(CommandTable::EnterRoomOtherUser) == false && buffer.Contains(CommandTable::Whisper) == false && Controller->IsUserInChatRoom())
 	{
 		OnResponseChat(const_cast<FString&>(buffer));
 	}
@@ -42,6 +44,10 @@ void ServerResponseHandler::HandleServerResponse(const FString& buffer)
 			if (find != nullptr)
 			{
 				if(find->Value) find->Value(*this, buffer);
+			}
+			else
+			{
+				Controller->CreateNotifyMessage(buffer);
 			}
 	
 		}
@@ -68,9 +74,10 @@ void ServerResponseHandler::OnResponseRoomEnter(const FString& res)
 {
 	Controller->SetMainUI(false);
 	Controller->SetChatUI(true);
-	 
-	FString roomTitle = res.Mid(res.Find("["), res.Find("]"));
 
+	int startIndex = res.Find("[") + 1;
+	int endIndex = res.Find("]");
+	FString roomTitle = res.Mid(startIndex, endIndex - startIndex);
 
 	Controller->SetChatUITitle(roomTitle);
 }
@@ -105,6 +112,15 @@ void ServerResponseHandler::OnResponseUserList(const FString& res)
 	FString userInfo = res.Mid(res.Find("["), res.Find("]"));
 
 	Controller->AddUserListItem(userInfo);
+}
+
+void ServerResponseHandler::OnResponseRoomEnterOtherUser(const FString& res)
+{
+	int startIndex = res.Find("[") + 1;
+	int endIndex = res.Find("]");
+	FString roomTitle = res.Mid(startIndex, endIndex - startIndex);
+	//FString roomTitle = res.Mid(res.Find("["), res.Find("]"));
+	if(Controller->IsUserInChatRoom()) Controller->SetChatUITitle(roomTitle);
 }
 
 int ServerResponseHandler::AddNewLineToLargeString(FString& command, int newLineCount)

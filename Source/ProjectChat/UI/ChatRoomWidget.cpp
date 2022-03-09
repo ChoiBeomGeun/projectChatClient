@@ -43,9 +43,6 @@ void UChatRoomWidget::OnClickSendMessage()
 	msg = msg.Replace(L"/", L"") +"\r\n";
 	ChatController->RequestChat(msg);
 	ChatTextBox->SetText(FText::GetEmpty());
-
-
-
 }
 
 void UChatRoomWidget::OnClickBackBtn()

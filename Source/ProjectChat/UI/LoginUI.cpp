@@ -20,14 +20,14 @@ void ULoginUI::SetPortUI()
 	TextBox->SetHintText(FText::FromString(L"포트입력 (기본7777)"));
 	
 	LoginButton->OnClicked.RemoveAll(this);
-	LoginButton->OnClicked.AddDynamic(this, &ULoginUI::OnClickSetPortBtn);
-
+	LoginButton->OnClicked.AddDynamic(this, &ULoginUI::OnClickSetPortBtn
+);
 }
 
 void ULoginUI::SetLoginUI()
 {
-	TitleTextBlock->SetText(FText::FromString("Login"));
-	TextBox->SetHintText(FText::FromString("Input NickName"));
+	TitleTextBlock->SetText(FText::FromString(L"로그인"));
+	TextBox->SetHintText(FText::FromString(L"닉네임을 입력하세요!"));
 
 	LoginButton->OnClicked.RemoveAll(this);
 	LoginButton->OnClicked.AddDynamic(this, &ULoginUI::OnClickLoginBtn);

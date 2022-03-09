@@ -25,6 +25,7 @@ public:
 	void OnResponseExit(const FString& res);
 	void OnResponseWhisper(const FString& res);
 	void OnResponseUserList(const FString& res);
+	void OnResponseRoomEnterOtherUser(const FString& res);
 
 	void SetController(UIChatController* controller)
 	{

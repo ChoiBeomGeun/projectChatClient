@@ -12,6 +12,7 @@ class PacketManager;
 UCLASS()
 class PROJECTCHAT_API ASocketActor : public AActor
 {
+	enum { BUFFER_SIZE = 2048 };
 	GENERATED_BODY()
 
 public:
@@ -20,15 +21,20 @@ public:
 	ASocketActor();
 	void SetPacketManager(PacketManager* packetManager);
 	void ConnectServer(int port, std::function<void(void)> successAction, std::function<void(void)> onFailAction);
-
+	
 public:	
 	// Called every frame 
 	virtual void Tick(float DeltaTime) override;
-
 	void Send(const FString& string);
 	TArray<FString> SplitString(wchar_t* target, const wchar_t* delimiter);
+
+private:
+	void InitBuffer();
+
+
 private:
 	PacketManager * Packetmanager;
-	uint8 Buffer[2048] = { 0 };
+	uint8 Buffer[BUFFER_SIZE] = { 0 };
+	int RecvBytes = 0;
 	bool IsConnected = false;
 };

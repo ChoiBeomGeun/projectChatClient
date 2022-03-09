@@ -131,6 +131,7 @@ void UIChatController::CreateNotifyMessage(const FString& msg)
 		messageWidget->SetText(msg);
 		MainView->AddMessageItem(widget);
 		//UPanelWidget::AddChild(messageWidget);
+		MainView->AddLogListItem(msg);
 	}
 
 }
@@ -175,6 +176,11 @@ void UIChatController::SetChatUI(bool isActive)
 void UIChatController::SetChatUITitle(const FString& title)
 {
 	ChatView->SetRoomName(title);
+}
+
+void UIChatController::SetWhisperUser(const FString& name)
+{
+	MainView->SetWhisperUser(name);
 }
 
 //=================================================================================================
@@ -271,6 +277,7 @@ void UIChatController::RequestWhisper(const FString& msg, const FString& name)
 
 bool UIChatController::IsUserInChatRoom()
 {
+	if (ChatView == nullptr) return false;
 	return ChatView->Visibility == ESlateVisibility::Visible;
 }
 

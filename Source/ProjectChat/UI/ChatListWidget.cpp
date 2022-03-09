@@ -9,8 +9,11 @@
 
 void UChatListWidget::OnClickBtn()
 {
-	//FString userName = InfoString.Mid(res.Find("["), res.Find("]"));
-	//ChatController->RequestWhisper()
+	int startIndex = InfoString.Find("(") + 1;
+	int endIndex = InfoString.Find(")");
+
+	FString userName = InfoString.Mid(startIndex, endIndex- startIndex);
+	ChatController->SetWhisperUser(userName);
 }
 
 void UChatListWidget::NativeOnListItemObjectSet(UObject* ListItemObject)
