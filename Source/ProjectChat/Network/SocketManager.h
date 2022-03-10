@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "SocketManager.generated.h"
+
 
 /**
  * 
  */
 class UServerResponseHandler;
-UCLASS()
-class PROJECTCHAT_API USocketManager : public UObject
+
+class PROJECTCHAT_API USocketManager
 {
-	GENERATED_BODY()
+	
 	enum { BUFFER_SIZE = 2048 };
 public:
 	USocketManager();
@@ -41,8 +41,7 @@ public:
 	wchar_t* MBTtoWideChar(uint8* from);
 	int WideCharToMBT(char* from, wchar_t* to);
 private:
-	TArray<FString> SplitString(char* target, const char* delimiter);
-	TArray<FString> SplitString(wchar_t* target, const wchar_t* delimiter);
+
 	void InitBuffer();
 private:
 	FSocket* Socket;

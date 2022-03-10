@@ -9,6 +9,9 @@
 
 void UChatListWidget::OnClickBtn()
 {
+	if (ChatController == nullptr)
+		return;
+
 	int startIndex = InfoString.Find("(") + 1;
 	int endIndex = InfoString.Find(")");
 

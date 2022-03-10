@@ -19,7 +19,7 @@ void AProjectChatGameModeBase::StartPlay()
 	auto gameInstance = GetWorld()->GetGameInstance();
 	UProjectChatGameInstance * GameInstanceRef = Cast<UProjectChatGameInstance>(gameInstance);
 
-	SocketManager = NewObject<USocketManager>();
+	SocketManager = new USocketManager();
 	GameInstanceRef->SetPacketManager(SocketManager);
 }
 

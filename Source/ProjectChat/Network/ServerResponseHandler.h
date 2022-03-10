@@ -5,16 +5,16 @@
 #include "CoreMinimal.h"
 #include <unordered_map>
 #include "UObject/NoExportTypes.h"
-#include "ServerResponseHandler.generated.h"
+
 
 class UUIChatController;
 /**
  * 
  */
-UCLASS()
-class PROJECTCHAT_API UServerResponseHandler : public UObject
+
+class PROJECTCHAT_API UServerResponseHandler 
 {
-	GENERATED_BODY()
+
 	using HandleFunc = TFunction<void(UServerResponseHandler&, const FString&)>;
 public:
 	void RegisterCommands();
@@ -41,5 +41,5 @@ private:
 	TPair<FString, HandleFunc>* FindCommand(const FString& command);
 
 	UUIChatController* Controller;
-	std::vector<TPair<FString, HandleFunc>> CommandArrayList;
+	TArray<TPair<FString, HandleFunc>> CommandArrayList;
 };

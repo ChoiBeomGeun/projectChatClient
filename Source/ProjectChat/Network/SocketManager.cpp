@@ -4,7 +4,7 @@
 #include "SocketManager.h"
 
 #include "Windows/AllowWindowsPlatformTypes.h"
-#include "../UI/ServerResponseHandler.h"
+#include "../Network/ServerResponseHandler.h"
 #include "Runtime/Networking/Public/Networking.h"
 #include "Sockets.h"
 #include "SocketSubsystem.h"
@@ -19,6 +19,8 @@ USocketManager::USocketManager()
 
 USocketManager::~USocketManager()
 {
+	Socket->Close();
+	IsConnected = false;
 }
 
 void USocketManager::SetServerResponseHandler(UServerResponseHandler* handler)
@@ -37,8 +39,6 @@ void USocketManager::ConnectServer(int port, TFunction<void(void)> onSuccessActi
 	TSharedRef<FInternetAddr> addr = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
 	addr->SetIp(ip.Value);
 	addr->SetPort(port);
-
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Trying to connect.")));
 
 	IsConnected = Socket->Connect(*addr);
 
@@ -83,49 +83,46 @@ void USocketManager::Send(const FString& string)
 
 void USocketManager::Tick()
 {
-	if (IsConnected == false)
+	uint32 pendingSize = 0;
+	if (IsConnected == false || !(Socket->HasPendingData(pendingSize)))
 	{
 		return;
 	}
 
-	uint32 pendingSize = 0;
+	int curRecvBytes = 0;
+	bool isReceived = Socket->Recv(Buffer + RecvBytes, BUFFER_SIZE - RecvBytes, curRecvBytes);
 
-	if (Socket->HasPendingData(pendingSize))
+	if (isReceived)
 	{
-		int curRecvBytes = 0;
-		bool isReceived = Socket->Recv(Buffer + RecvBytes, BUFFER_SIZE - RecvBytes, curRecvBytes);
+		RecvBytes += curRecvBytes;
 
-		if (isReceived)
+
+		wchar_t* pStr = MBTtoWideChar(Buffer);
+
+		const FString& bufferToString = pStr;
+
+		if (pStr != nullptr)
 		{
-			RecvBytes += curRecvBytes;
+			TArray<FString> lines;
 
+			bufferToString.ParseIntoArray(lines, TEXT("\r\n"));
 
-			wchar_t* pStr = MBTtoWideChar(Buffer);
-
-			const FString& bufferToString = pStr;
-
-			if (pStr != nullptr)
+			for (const FString& line : lines)
 			{
-				TArray<FString> lines;
-
-				bufferToString.ParseIntoArray(lines, TEXT("\r\n"));
-
-				for (const FString& line : lines)
-				{
-					HandleRecv(line);
-				}
-
-				delete pStr;
-				InitBuffer();
-			}
-			else
-			{
-				InitBuffer();
+				HandleRecv(line);
 			}
 
-
+			delete pStr;
+			InitBuffer();
 		}
+		else
+		{
+			InitBuffer();
+		}
+
+
 	}
+	
 }
 
 void USocketManager::SendRoomList()
@@ -198,33 +195,6 @@ int USocketManager::WideCharToMBT(char* to, wchar_t* from)
 	return len;
 }
 
-TArray<FString> USocketManager::SplitString(wchar_t* target, const wchar_t* delimiter)
-{
-	wchar_t* token = wcstok(target, delimiter);
-
-	TArray<FString> splitStrings;
-
-	while (token != NULL)
-	{
-		splitStrings.Add(token);
-		token = wcstok(NULL, delimiter);
-	}
-	return splitStrings;
-}
-
-TArray<FString> USocketManager::SplitString(char* target, const char* delimiter)
-{
-	char* context = NULL;
-	char* token = strtok_s(target, delimiter, &context);
-	TArray<FString> splitStrings;
-
-	while (token != NULL)
-	{
-		splitStrings.Add(token);
-		token = strtok_s(NULL, delimiter, &context);
-	}
-	return splitStrings;
-}
 void USocketManager::InitBuffer()
 {
 	memset(Buffer, 0, BUFFER_SIZE);

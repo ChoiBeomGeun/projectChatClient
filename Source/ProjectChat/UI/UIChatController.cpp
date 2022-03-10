@@ -162,7 +162,7 @@ void UUIChatController::SetChatUI(bool isActive)
 {
 	if (isActive == true)
 	{
-		ChatView->SetVisibility(ESlateVisibility::Visible);
+		ChatView->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		IsUserIn = true;
 	}
 	else

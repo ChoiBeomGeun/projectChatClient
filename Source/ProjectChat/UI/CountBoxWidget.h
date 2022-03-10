@@ -39,4 +39,6 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "CountBox")
 	int32 MinCount;
+
+	int value = 0;
 };

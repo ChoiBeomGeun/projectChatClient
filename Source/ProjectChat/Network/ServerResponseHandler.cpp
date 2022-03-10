@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "ServerResponseHandler.h"
@@ -13,18 +13,17 @@
 
 void UServerResponseHandler::RegisterCommands()
 {
-
-	CommandArrayList.emplace_back(TPair<FString, HandleFunc >(CommandTable::LoginSuccess, HandleFunc(&UServerResponseHandler::OnResponseLogin)));
-	CommandArrayList.emplace_back(TPair<FString, HandleFunc >(CommandTable::RoomListItem, HandleFunc(&UServerResponseHandler::OnResponseRoomList)));
-	CommandArrayList.emplace_back(TPair<FString, HandleFunc >(CommandTable::EnterRoom, HandleFunc(&UServerResponseHandler::OnResponseRoomEnter)));
-	CommandArrayList.emplace_back(TPair<FString, HandleFunc >(CommandTable::ExitRoom, HandleFunc(&UServerResponseHandler::OnResponseExit)));
-	CommandArrayList.emplace_back(TPair<FString, HandleFunc >(CommandTable::UserListItem, HandleFunc(&UServerResponseHandler::OnResponseUserList)));
-	CommandArrayList.emplace_back(TPair<FString, HandleFunc >(CommandTable::EnterRoomOtherUser, HandleFunc(&UServerResponseHandler::OnResponseRoomEnterOtherUser)));
+	CommandArrayList.Add(TPair<FString, HandleFunc >(CommandTable::LoginSuccess, HandleFunc(&UServerResponseHandler::OnResponseLogin)));
+	CommandArrayList.Add(TPair<FString, HandleFunc >(CommandTable::RoomListItem, HandleFunc(&UServerResponseHandler::OnResponseRoomList)));
+	CommandArrayList.Add(TPair<FString, HandleFunc >(CommandTable::EnterRoom, HandleFunc(&UServerResponseHandler::OnResponseRoomEnter)));
+	CommandArrayList.Add(TPair<FString, HandleFunc >(CommandTable::ExitRoom, HandleFunc(&UServerResponseHandler::OnResponseExit)));
+	CommandArrayList.Add(TPair<FString, HandleFunc >(CommandTable::UserListItem, HandleFunc(&UServerResponseHandler::OnResponseUserList)));
+	CommandArrayList.Add(TPair<FString, HandleFunc >(CommandTable::EnterRoomOtherUser, HandleFunc(&UServerResponseHandler::OnResponseRoomEnterOtherUser)));
 }
 
 void UServerResponseHandler::HandleServerResponse(const FString& buffer)
 {
-	// ±Ó¼Ó¸»°ú ´Ù¸¥ »ó´ë°¡ ¹æ¿¡ µé¾î¿Ô´Ù´Â ¼­¹ö Ä¿¸Çµå¸¦ Á¦¿ÜÇÏ°í Ãâ·ÂÇÑ´Ù.
+	// ê·“ì†ë§ê³¼ ë‹¤ë¥¸ ìƒëŒ€ê°€ ë°©ì— ë“¤ì–´ì™”ë‹¤ëŠ” ì„œë²„ ì»¤ë§¨ë“œë¥¼ ì œì™¸í•˜ê³  ì¶œë ¥í•œë‹¤.
 	if (buffer.Contains(CommandTable::EnterRoomOtherUser) == false
 		&& buffer.Contains(CommandTable::Whisper) == false
 		&& buffer.Contains(CommandTable::UserListItem) == false
@@ -36,11 +35,7 @@ void UServerResponseHandler::HandleServerResponse(const FString& buffer)
 	{
 
 		//ServerCommand
-		if (buffer.StartsWith("/") == false)
-		{
-
-		}
-		else
+		if (buffer.StartsWith("/") == true)
 		{
 			TPair<FString, UServerResponseHandler::HandleFunc>* find = FindCommand(buffer);
 			if (find != nullptr)
@@ -67,7 +62,7 @@ void UServerResponseHandler::OnResponseLogin(const FString& res)
 
 void UServerResponseHandler::OnResponseRoomList(const FString& res)
 {
-	FString findText = TEXT("¹æ ÀÌ¸§ :");
+	FString findText = TEXT("ë°© ì´ë¦„ :");
 	int startIndex = res.Find(findText) + GetNum(findText);
 	int endIndex = res.Find(",");
 	FString roomTitle = res.Mid(startIndex, endIndex - startIndex) + "\n";
@@ -152,7 +147,7 @@ int UServerResponseHandler::AddNewLineToLargeString(FString& command, int newLin
 
 TPair<FString, UServerResponseHandler::HandleFunc>* UServerResponseHandler::FindCommand(const FString& command)
 {
-	for (int i = 0; i < CommandArrayList.size(); i++)
+	for (int i = 0; i < CommandArrayList.Num(); i++)
 	{
 		if (command.Contains(CommandArrayList[i].Key) == true)
 		{

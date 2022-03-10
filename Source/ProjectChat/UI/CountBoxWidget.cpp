@@ -14,6 +14,8 @@ void UCountBoxWidget::NativeConstruct()
 
 	MinusBtn->OnClicked.RemoveAll(this);
 	MinusBtn->OnClicked.AddDynamic(this, &UCountBoxWidget::OnClickMinus);
+
+	value = MinCount;
 }
 
 void UCountBoxWidget::OnClickPlus()
@@ -21,8 +23,6 @@ void UCountBoxWidget::OnClickPlus()
 	FString string = ValueTextBlock->Text.ToString();
 	if (string.IsNumeric())
 	{
-		int32 value = FCString::Atoi(*string);
-
 		if (value + 1 > MaxCount) return;
 		else ++value;
 		ValueTextBlock->SetText(FText::FromString(FString::FromInt(value)));
@@ -34,8 +34,6 @@ void UCountBoxWidget::OnClickMinus()
 	FString string = ValueTextBlock->Text.ToString();
 	if (string.IsNumeric())
 	{
-		int32 value = FCString::Atoi(*string);
-
 		if (value - 1 < MinCount) return;
 		else --value;
 		ValueTextBlock->SetText(FText::FromString(FString::FromInt(value)));
@@ -44,5 +42,5 @@ void UCountBoxWidget::OnClickMinus()
 
 FString UCountBoxWidget::GetValue()
 {
-	return ValueTextBlock->Text.ToString();
+	return FString::FromInt(value);
 }

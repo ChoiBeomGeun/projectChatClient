@@ -9,7 +9,7 @@
 #include  "Runtime/Networking/Public/Networking.h"
 #include "../UI/UIChatController.h"
 #include "../Network/SocketManager.h"
-#include "../UI/ServerResponseHandler.h"
+#include "../Network/ServerResponseHandler.h"
 #include "Kismet/GameplayStatics.h"
 
 void UProjectChatGameInstance::OnStart()
@@ -20,13 +20,13 @@ void UProjectChatGameInstance::OnStart()
 
 void UProjectChatGameInstance::SetPacketManager(USocketManager* packetManager)
 {
-	Controller = NewObject<UUIChatController>();
+	Controller = new UUIChatController();
 	Controller->SetWorld(GetWorld());
 	Controller->CreateMainView();
 	Controller->CreateLoginView();
 	Controller->CreateChatView();
 
-	UServerResponseHandler* responseHandler = NewObject<UServerResponseHandler>();
+	UServerResponseHandler* responseHandler = new UServerResponseHandler();
 	responseHandler->RegisterCommands();
 	responseHandler->SetController(Controller);
 	SocketManager = packetManager;

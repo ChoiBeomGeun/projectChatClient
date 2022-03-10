@@ -5,16 +5,15 @@
 #include "CoreMinimal.h"
 #include "ProjectChat/Network/SocketManager.h"
 #include "UObject/NoExportTypes.h"
-#include "UIChatController.generated.h"
 
 class ASocketActor;
 class ULoginUI;
 class UMainScreenUIWidget;
 class UChatRoomWidget;
-UCLASS()
-class PROJECTCHAT_API UUIChatController : public UObject
+
+class PROJECTCHAT_API UUIChatController
 {
-	GENERATED_BODY()
+
 public:
 
 	UUIChatController();
@@ -38,8 +37,6 @@ public:
 	void AddRoomListItem(const FString& name);
 	void AddChatListItem(const FString& name, int newLineCount);
 	void AddUserListItem(const FString& name);
-
-
 
 	void RequestSendLogin(const FString& name);
 	void RequestConnectServer(int port, TFunction<void(void)> onSuccessAction, TFunction<void(void)> onFailAction);
