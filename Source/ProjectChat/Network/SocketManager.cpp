@@ -103,17 +103,22 @@ void USocketManager::Tick()
 
 		if (pStr != nullptr)
 		{
-			TArray<FString> lines;
-
-			bufferToString.ParseIntoArray(lines, TEXT("\r\n"));
-
-			for (const FString& line : lines)
+		
+			if (bufferToString.Contains("\r\n") == true)
 			{
-				HandleRecv(line);
+				TArray<FString> lines;
+				bufferToString.ParseIntoArray(lines, TEXT("\r\n"));
+				if (lines.Num() > 0)
+				{
+					for (const FString& line : lines)
+					{
+						HandleRecv(line);
+					}
+					InitBuffer();
+				}
 			}
-
 			delete pStr;
-			InitBuffer();
+		
 		}
 		else
 		{
