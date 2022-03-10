@@ -29,6 +29,7 @@ public:
 	void OnResponseWhisper(const FString& res);
 	void OnResponseUserList(const FString& res);
 	void OnResponseRoomEnterOtherUser(const FString& res);
+	void OnResponseInviteRequest(const FString& res);
 
 	void SetController(UUIChatController* controller)
 	{

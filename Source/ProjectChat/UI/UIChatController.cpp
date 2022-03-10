@@ -1,5 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "UIChatController.h"
+
+#include "InviteWidget.h"
 #include "ViewWidget.h"
 #include "NotifyMessageWidget.h"
 #include "../Network/SocketManager.h"
@@ -133,6 +135,24 @@ void UUIChatController::CreateNotifyMessage(const FString& msg)
 
 }
 
+void UUIChatController::CreateInviteMessage(const FString& msg, int32 roomNumber)
+{
+	UBlueprintGeneratedClass* notifyBlueprint = LoadObject<UBlueprintGeneratedClass>(nullptr, TEXT("WidgetBlueprint'/Game/Blueprints/InviteMessage.InviteMessage_C'"));
+	UClass* message;
+	message = Cast<UClass>(notifyBlueprint);
+
+	auto widget = CreateWidget(CachedWorld, message);
+	UInviteWidget* inviteWidget = Cast<UInviteWidget>(widget);
+	if (inviteWidget != NULL)
+	{
+		inviteWidget->SetController(this);
+		inviteWidget->SetTextBox(msg);
+		inviteWidget->InviteRoomNumber = roomNumber;
+		inviteWidget->AddToViewport();
+	}
+
+}
+
 void UUIChatController::CreateRoomList()
 {
 
@@ -150,6 +170,7 @@ void UUIChatController::SetMainUI(bool isActive)
 		MainView->SetChatCanvas(true);
 		MainView->SetRoomCreateCanvas(false);
 		MainView->SetUserListCanvas(true);
+
 	}
 	else
 	{
@@ -180,6 +201,11 @@ void UUIChatController::SetChatUITitle(const FString& title)
 void UUIChatController::SetWhisperUser(const FString& name)
 {
 	MainView->SetWhisperUser(name);
+}
+
+void UUIChatController::PlayMainAppearAnim()
+{
+	MainView->PlayApeearAnim();
 }
 
 //=================================================================================================
@@ -268,6 +294,11 @@ void UUIChatController::RequestUserList()
 void UUIChatController::RequestWhisper(const FString& msg, const FString& name)
 {
 	GetPacketmanager()->SendWhispher(msg, name);
+}
+
+void UUIChatController::RequestInvite(const FString& name)
+{
+	GetPacketmanager()->SendInvite(name);
 }
 
 //=================================================================================================

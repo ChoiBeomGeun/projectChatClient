@@ -174,6 +174,13 @@ void USocketManager::SendWhispher(const FString& msg, const FString& name)
 	Send(command);
 }
 
+void USocketManager::SendInvite(const FString& name)
+{
+	FString command = FString::Printf(TEXT("/i %s \r\n"), *name);
+	Send(command);
+}
+
+
 void USocketManager::HandleRecv(const FString& buffer)
 {
 	ResponseHandler->HandleServerResponse(buffer);

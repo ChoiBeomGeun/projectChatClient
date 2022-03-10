@@ -46,6 +46,11 @@ void UMainScreenUIWidget::NativeConstruct()
 	LogButton->OnClicked.RemoveAll(this);
 	LogButton->OnClicked.AddDynamic(this, &UMainScreenUIWidget::ToggleLog);
 
+	if (InviteButton != nullptr)
+	{
+		InviteButton->OnClicked.RemoveAll(this);
+		InviteButton->OnClicked.AddDynamic(this, &UMainScreenUIWidget::OnClickInvite);
+	}
 	ChatCanvas->SetVisibility(ESlateVisibility::Collapsed);
 	RoomCreateCanvas->SetVisibility(ESlateVisibility::Collapsed);
 	UserListCanvas->SetVisibility(ESlateVisibility::Collapsed);
@@ -57,6 +62,11 @@ void UMainScreenUIWidget::NativeConstruct()
 	});
 
 	URoomListView->ClearListItems();
+}
+
+void UMainScreenUIWidget::PlayApeearAnim()
+{
+	PlayAnimation(inAnim);
 }
 
 //=================================================================================================
@@ -250,5 +260,11 @@ void UMainScreenUIWidget::OnClickWhisper()
 	}
 	
 	ChatController->RequestWhisper(WhisperTextBox->GetText().ToString(), WhisperTextBox->HintText.ToString());
+}
+
+void UMainScreenUIWidget::OnClickInvite()
+{
+
+	ChatController->RequestInvite(WhisperTextBox->HintText.ToString());
 }
 

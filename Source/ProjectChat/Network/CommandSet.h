@@ -12,6 +12,7 @@ namespace CommandTable
 	const FString Whisper = TEXT("귓속말");
 	const FString UserListItem = TEXT("유저 닉네임");
 	const FString EnterRoomOtherUser = TEXT("방에 들어왔습니다");
+	const FString InviteRequest = TEXT("초대 요청");
 }
 
 

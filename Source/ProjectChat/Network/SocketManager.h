@@ -36,6 +36,7 @@ public:
 	void SendEnterRoom(int index);
 	void SendUserList();
 	void SendWhispher(const FString& msg, const FString& name);
+	void SendInvite(const FString& name);
 	void HandleRecv(const FString& buffer);
 
 	wchar_t* MBTtoWideChar(uint8* from);

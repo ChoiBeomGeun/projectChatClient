@@ -19,6 +19,7 @@ void UServerResponseHandler::RegisterCommands()
 	CommandArrayList.Add(TPair<FString, HandleFunc >(CommandTable::ExitRoom, HandleFunc(&UServerResponseHandler::OnResponseExit)));
 	CommandArrayList.Add(TPair<FString, HandleFunc >(CommandTable::UserListItem, HandleFunc(&UServerResponseHandler::OnResponseUserList)));
 	CommandArrayList.Add(TPair<FString, HandleFunc >(CommandTable::EnterRoomOtherUser, HandleFunc(&UServerResponseHandler::OnResponseRoomEnterOtherUser)));
+	CommandArrayList.Add(TPair<FString, HandleFunc >(CommandTable::InviteRequest, HandleFunc(&UServerResponseHandler::OnResponseInviteRequest)));
 }
 
 void UServerResponseHandler::HandleServerResponse(const FString& buffer)
@@ -27,6 +28,7 @@ void UServerResponseHandler::HandleServerResponse(const FString& buffer)
 	if (buffer.Contains(CommandTable::EnterRoomOtherUser) == false
 		&& buffer.Contains(CommandTable::Whisper) == false
 		&& buffer.Contains(CommandTable::UserListItem) == false
+		&& buffer.Contains(CommandTable::InviteRequest) == false
 		&& Controller->IsUserInChatRoom())
 	{
 		OnResponseChat(const_cast<FString&>(buffer));
@@ -56,6 +58,7 @@ void UServerResponseHandler::OnResponseLogin(const FString& res)
 {
 	Controller->RemoveLoginUI();
 	Controller->SetMainUI(true);
+	Controller->PlayMainAppearAnim();
 	Controller->RequestSendRoomList();
 	Controller->RequestUserList();
 }
@@ -126,6 +129,15 @@ void UServerResponseHandler::OnResponseRoomEnterOtherUser(const FString& res)
 	FString roomTitle = res.Mid(startIndex, endIndex - startIndex);
 	//FString roomTitle = res.Mid(res.Find("["), res.Find("]"));
 	if (Controller->IsUserInChatRoom()) Controller->SetChatUITitle(roomTitle);
+}
+
+void UServerResponseHandler::OnResponseInviteRequest(const FString& res)
+{
+	int startIndex = res.Find("[") + 1;
+	int endIndex = res.Find("]");
+	FString roomNumber = res.Mid(startIndex, endIndex - startIndex);
+
+	Controller->CreateInviteMessage(res, FCString::Atoi(*roomNumber));
 }
 
 int UServerResponseHandler::AddNewLineToLargeString(FString& command, int newLineCount)

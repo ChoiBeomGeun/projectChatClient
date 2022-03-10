@@ -26,6 +26,7 @@ public:
 	void CreateMainView();
 	void CreateChatView();
 	void CreateNotifyMessage(const FString& msg);
+	void CreateInviteMessage(const FString& msg, int32 roomNumber);
 	void CreateRoomList();
 
 	void RemoveLoginUI();
@@ -33,6 +34,7 @@ public:
 	void SetChatUI(bool isActive);
 	void SetChatUITitle(const FString& title);
 	void SetWhisperUser(const FString& name);
+	void PlayMainAppearAnim();
 
 	void AddRoomListItem(const FString& name);
 	void AddChatListItem(const FString& name, int newLineCount);
@@ -47,6 +49,7 @@ public:
 	void RequestEnterRoom(int index);
 	void RequestUserList();
 	void RequestWhisper(const FString& msg, const FString& name);
+	void RequestInvite(const FString& name);
 
 	bool IsUserInChatRoom();
 private:

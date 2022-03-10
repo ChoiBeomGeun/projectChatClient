@@ -32,6 +32,7 @@ public:
 		MessageBox->AddChild(widget);
 	}
 
+	void PlayApeearAnim();
 	void AddRoomListItem(const FString& res);
 	void AddUserListItem(const FString& res);
 	void AddLogListItem(const FString& res);
@@ -59,6 +60,9 @@ private:
 	void OnClickWhisper();
 
 	UFUNCTION()
+	void OnClickInvite();
+
+	UFUNCTION()
 	void OnClickExit();
 
 	UFUNCTION()
@@ -68,6 +72,9 @@ private:
 	void ToggleLog();
 
 private:
+
+	UPROPERTY(Meta = (BindWidgetAnim), Meta = (AllowPrivateAccess=true), Transient)
+	class UWidgetAnimation* inAnim;
 
 	UPROPERTY(meta = (BindWidget))
 	UVerticalBox* MessageBox;
@@ -95,6 +102,9 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* WhisperButton;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* InviteButton;
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* LogButton;
