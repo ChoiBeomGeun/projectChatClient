@@ -42,5 +42,5 @@ private:
 	TPair<FString, HandleFunc>* FindCommand(const FString& command);
 
 	UUIChatController* Controller;
-	TArray<TPair<FString, HandleFunc>> CommandArrayList;
+	std::vector<TPair<FString, HandleFunc>> CommandArrayList;
 };

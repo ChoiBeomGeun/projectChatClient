@@ -13,13 +13,13 @@
 
 void UServerResponseHandler::RegisterCommands()
 {
-	CommandArrayList.Add(TPair<FString, HandleFunc >(CommandTable::LoginSuccess, HandleFunc(&UServerResponseHandler::OnResponseLogin)));
-	CommandArrayList.Add(TPair<FString, HandleFunc >(CommandTable::RoomListItem, HandleFunc(&UServerResponseHandler::OnResponseRoomList)));
-	CommandArrayList.Add(TPair<FString, HandleFunc >(CommandTable::EnterRoom, HandleFunc(&UServerResponseHandler::OnResponseRoomEnter)));
-	CommandArrayList.Add(TPair<FString, HandleFunc >(CommandTable::ExitRoom, HandleFunc(&UServerResponseHandler::OnResponseExit)));
-	CommandArrayList.Add(TPair<FString, HandleFunc >(CommandTable::UserListItem, HandleFunc(&UServerResponseHandler::OnResponseUserList)));
-	CommandArrayList.Add(TPair<FString, HandleFunc >(CommandTable::EnterRoomOtherUser, HandleFunc(&UServerResponseHandler::OnResponseRoomEnterOtherUser)));
-	CommandArrayList.Add(TPair<FString, HandleFunc >(CommandTable::InviteRequest, HandleFunc(&UServerResponseHandler::OnResponseInviteRequest)));
+	CommandArrayList.emplace_back(TPair<FString, HandleFunc >(CommandTable::LoginSuccess, HandleFunc(&UServerResponseHandler::OnResponseLogin)));
+	CommandArrayList.emplace_back(TPair<FString, HandleFunc >(CommandTable::RoomListItem, HandleFunc(&UServerResponseHandler::OnResponseRoomList)));
+	CommandArrayList.emplace_back(TPair<FString, HandleFunc >(CommandTable::EnterRoom, HandleFunc(&UServerResponseHandler::OnResponseRoomEnter)));
+	CommandArrayList.emplace_back(TPair<FString, HandleFunc >(CommandTable::ExitRoom, HandleFunc(&UServerResponseHandler::OnResponseExit)));
+	CommandArrayList.emplace_back(TPair<FString, HandleFunc >(CommandTable::UserListItem, HandleFunc(&UServerResponseHandler::OnResponseUserList)));
+	CommandArrayList.emplace_back(TPair<FString, HandleFunc >(CommandTable::EnterRoomOtherUser, HandleFunc(&UServerResponseHandler::OnResponseRoomEnterOtherUser)));
+	CommandArrayList.emplace_back(TPair<FString, HandleFunc >(CommandTable::InviteRequest, HandleFunc(&UServerResponseHandler::OnResponseInviteRequest)));
 }
 
 void UServerResponseHandler::HandleServerResponse(const FString& buffer)
@@ -159,7 +159,7 @@ int UServerResponseHandler::AddNewLineToLargeString(FString& command, int newLin
 
 TPair<FString, UServerResponseHandler::HandleFunc>* UServerResponseHandler::FindCommand(const FString& command)
 {
-	for (int i = 0; i < CommandArrayList.Num(); i++)
+	for (int i = 0; i < CommandArrayList.size(); i++)
 	{
 		if (command.Contains(CommandArrayList[i].Key) == true)
 		{

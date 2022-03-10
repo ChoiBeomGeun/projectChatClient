@@ -189,7 +189,9 @@ void UUIChatController::SetChatUI(bool isActive)
 	else
 	{
 		IsUserIn = false;
+		
 		ChatView->SetVisibility(ESlateVisibility::Collapsed);
+		ChatView->ClearListItems();
 	}
 }
 

@@ -68,3 +68,8 @@ void UChatRoomWidget::AddChatListItem(const FString& res, int newLineCount,bool 
 	UChatListView->RequestScrollItemIntoView(data);
 	UChatListView->ScrollIndexIntoView(UChatListView->GetNumItems() - 1);
 }
+
+void UChatRoomWidget::ClearListItems()
+{
+	UChatListView->ClearListItems();
+}
